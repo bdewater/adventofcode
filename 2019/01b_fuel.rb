@@ -21,28 +21,23 @@ def calculate_fuel(mass)
   (mass.to_i / 3).floor - 2
 end
 
-def calculate_fuel_for_fuel(mass)
-  mass_left = mass
-  fuel = 0
-  loop do
-    more_fuel = calculate_fuel(mass_left)
-    if more_fuel.negative?
-      break # wishing really hard
-    else
-      mass_left = more_fuel
-      fuel += more_fuel
-    end
+def calculate_fuel_for_fuel(mass_left, total_fuel)
+  more_fuel = calculate_fuel(mass_left)
+  if more_fuel.negative?
+    return total_fuel
+  else
+    mass_left = more_fuel
+    total_fuel += more_fuel
+    calculate_fuel_for_fuel(mass_left, total_fuel)
   end
-  fuel
 end
 
 input = ENV["MASS"] ? [ENV["MASS"].to_i] : File.readlines("01_input.txt").map(&:to_i)
 
 total = input.sum(0) do |module_mass|
   module_fuel = calculate_fuel(module_mass)
-  fuel_fuel = calculate_fuel_for_fuel(module_fuel)
 
-  module_fuel + fuel_fuel
+  calculate_fuel_for_fuel(module_fuel, module_fuel)
 end
 
 puts total
