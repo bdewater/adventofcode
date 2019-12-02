@@ -32,7 +32,7 @@ def calculate_fuel_for_fuel(mass_left, total_fuel)
   end
 end
 
-input = ENV["MASS"] ? [ENV["MASS"].to_i] : File.readlines("01_input.txt").map(&:to_i)
+input = ENV["MASS"] ? [ENV["MASS"].to_i] : File.readlines("01_input.txt", chomp: true).map(&:to_i)
 
 total = input.sum(0) do |module_mass|
   module_fuel = calculate_fuel(module_mass)

@@ -12,6 +12,6 @@
 #
 # What is the sum of the fuel requirements for all of the modules on your spacecraft?
 
-input = ENV["MASS"] ? [ENV["MASS"].to_i] : File.readlines("01_input.txt").map(&:to_i)
+input = ENV["MASS"] ? [ENV["MASS"].to_i] : File.readlines("01_input.txt", chomp: true).map(&:to_i)
 
 puts input.sum(0) { |mass| (mass / 3).floor - 2 }
