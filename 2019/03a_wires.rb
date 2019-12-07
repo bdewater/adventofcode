@@ -1,24 +1,38 @@
 class CircuitBoard
-  Position = Struct.new(:x, :y)
-
-
-  BOARD_SIZE = 15000
-  START_POS = Position.new(7500, 7500).freeze
-
-  def initialize(wires)
-    @circuit = Array.new(BOARD_SIZE) do
-      Array.new(BOARD_SIZE)
+  Position = Struct.new(:x, :y) do
+    def left
+      self.x -= 1
     end
-    @wires = wires
-    @crossings = []
+
+    def up
+      self.y += 1
+    end
+
+    def right
+      self.x += 1
+    end
+
+    def down
+      self.y -= 1
+    end
   end
 
-  def find_intersections
+  START_POS = Position.new(0, 0).freeze
+
+  def initialize(wires)
+    @circuits = Hash.new { |hash, key| hash[key] = [] }
+    @wires = wires
+  end
+
+  def run_wires
     @wires.each_with_index do |wire, wire_nr|
       run_wire(wire, wire_nr)
     end
+  end
 
-    @crossings
+  def find_intersection
+    intersections = @circuits[0] & @circuits[1]
+    intersections
       .map { |location| manhattan_distance(START_POS, location) }
       .sort
       .first
@@ -33,22 +47,22 @@ class CircuitBoard
       case direction
         when "L"
           steps.times do
-            location.x -= 1
+            location.left
             mark_wire(location, wire_nr)
           end
         when "U"
           steps.times do
-            location.y += 1
+            location.up
             mark_wire(location, wire_nr)
           end
         when "R"
           steps.times do
-            location.x += 1
+            location.right
             mark_wire(location, wire_nr)
           end
         when "D"
           steps.times do
-            location.y -= 1
+            location.down
             mark_wire(location, wire_nr)
           end
         else
@@ -58,15 +72,7 @@ class CircuitBoard
   end
 
   def mark_wire(location, wire_nr)
-    peek = @circuit[location.x][location.y]
-    if peek && !peek.empty? && !peek.include?(wire_nr)
-      @crossings << location.dup
-    end
-
-    unless peek&.include?(wire_nr)
-      @circuit[location.x][location.y] ||= []
-      @circuit[location.x][location.y] << wire_nr
-    end
+    @circuits[wire_nr] << location.dup
   end
 
   def manhattan_distance(location1, location2)
@@ -75,4 +81,6 @@ class CircuitBoard
 end
 
 data = File.readlines("03_input.txt", chomp: true).map { |line| line.split(",") }
-puts CircuitBoard.new(data).find_intersections
+board = CircuitBoard.new(data)
+board.run_wires
+puts board.find_intersection
