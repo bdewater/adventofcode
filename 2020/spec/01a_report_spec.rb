@@ -12,7 +12,11 @@ RSpec.describe Report do
 
   describe ".multiply" do
     it do
-      expect(described_class.multiply(INPUT)).to eq(514579)
+      expect(described_class.multiply(INPUT, 2)).to eq(514579)
+    end
+
+    it do
+      expect(described_class.multiply(INPUT, 3)).to eq(241861950)
     end
   end
 end

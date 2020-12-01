@@ -1,12 +1,11 @@
 class Report
-  def self.multiply(input)
+  def self.multiply(input, combination_length)
     report = input.split("\n").map(&:to_i)
 
-    permutations = report.permutation(2).to_a
-    permutations.select! { |a, b| a + b == 2020 }
-
-    a, b = permutations.first
-    a * b
+    report
+      .combination(combination_length)
+      .find { |n| n.take(combination_length).sum == 2020 }
+      .reduce(:*)
   end
 end
 
